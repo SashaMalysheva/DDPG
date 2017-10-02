@@ -17,6 +17,9 @@ from src.network.ddpg_network import CriticNetwork, ActorNetwork
 from src.replaybuffer import ReplayBuffer
 from src.explorationnoise import OrnsteinUhlenbeckProcess, GreedyPolicy
 
+from osim.env import *
+from osim.http.client import Client
+
 flags = tf.app.flags
 
 # ================================
@@ -83,7 +86,9 @@ SUMMARY_DIR = './results/{}/{}/tf_ddpg'.format(FLAGS.env_name, DATETIME)
 def main(_):
     gpu_options = tf.GPUOptions(allow_growth=True)
     with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
-        env = gym.make(FLAGS.env_name)
+        # Load walking environment
+	env = RunEnv(args.visualize)
+	env.reset()
         np.random.seed(RANDOM_SEED)
         tf.set_random_seed(RANDOM_SEED)
         env.seed(RANDOM_SEED)
